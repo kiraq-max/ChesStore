@@ -1,0 +1,64 @@
+================================================================================
+                    STRUTTURA DEL PROGETTO: CHESSTORE
+================================================================================
+
+Chesstore/
+│
+├── .gitignore                      <- Esclusioni per Git (.metadata, build, .settings, ecc.)
+├── .project                        <- File di configurazione progetto Eclipse
+├── .classpath                      <- Configurazione classpath e runtime Tomcat
+├── struttura_progetto.txt          <- Mappa dell'albero del progetto
+│
+├── db/                             <- Script SQL e documentazione della base di dati
+│   ├── DB_chesstore.png            <- Screenshot/Export del diagramma ER relazionale
+│   ├── schemaDB.sql                <- Istruzioni DDL (CREATE TABLE, vincoli e foreign key)
+│   └── seed_data.sql               <- Dati di test per il popolamento iniziale del catalogo
+│
+└── src/
+    └── main/
+        ├── java/                   <- Codice sorgente Java (Architettura MVC & DAO)
+        │   └── it/
+        │       └── unisa/
+        │           ├── model/      <- JavaBean / DTO (Serializable, costruttore vuoto, get/set)
+        │           │   ├── UtenteBean.java
+        │           │   ├── CategoriaBean.java
+        │           │   ├── ProductBean.java
+        │           │   ├── OrdineBean.java
+        │           │   ├── ComposizioneOrdineBean.java
+        │           │   └── CartBean.java (gestito in sessione utente)
+        │           │
+        │           ├── dao/        <- Data Access Object (JDBC, PreparedStatement, SQL)
+        │           │   ├── ProductDao.java
+        │           │   ├── UtenteDao.java
+        │           │   ├── CategoriaDao.java
+        │           │   └── OrdineDao.java
+        │           │
+        │           └── control/    <- Controller (Servlet Jakarta/Java EE, doGet/doPost)
+        │               ├── CatalogoServlet.java
+        │               ├── CartServlet.java
+        │               └── AuthServlet.java
+        │
+        └── webapp/                 <- Web Content / Risorse Web per Apache Tomcat
+            ├── index.jsp           <- Entry point dell'applicazione (redirect a /catalogo)
+            │
+            ├── styles/             <- Fogli di stile CSS esterni (layout responsive)
+            │   └── style.css
+            │
+            ├── scripts/            <- Script JavaScript (validazione form DOM & AJAX)
+            │   └── main.js
+            │
+            ├── images/             <- Risorse statiche multimediali (foto prodotti scacchi)
+            │
+            ├── META-INF/           <- Configurazione del server per l'ambiente locale
+            │   ├── MANIFEST.MF
+            │   └── context.xml     <- Configurazione del DataSource JNDI su Tomcat
+            │
+            └── WEB-INF/            <- Cartella protetta dal Web Container
+                ├── web.xml         <- Deployment Descriptor (risorse, error-page, mapping)
+                ├── lib/            <- Librerie esterne JAR (Driver JDBC, JSTL taglib)
+                └── view/           <- Pagine JSP protette (non accessibili direttamente via URL)
+                    ├── catalogo.jsp
+                    ├── carrello.jsp
+                    ├── login.jsp
+                    └── error.jsp
+================================================================================
