@@ -51,6 +51,7 @@ CREATE TABLE composizione_ordine (
     id INT AUTO_INCREMENT PRIMARY KEY,
     id_ordine INT NOT NULL,
     id_prodotto INT NULL,
+    nome_prodotto_storico VARCHAR(100) NOT NULL,
     quantita INT NOT NULL,
     prezzo_unitario_storico DECIMAL(10,2) NOT NULL,
     FOREIGN KEY (id_ordine) REFERENCES ordine(id) 

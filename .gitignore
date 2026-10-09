@@ -8,3 +8,5 @@ tmp/
 *.war
 build/
 .settings/
+*.pdf
+*.md
