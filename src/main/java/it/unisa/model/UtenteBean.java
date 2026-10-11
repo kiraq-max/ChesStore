@@ -24,7 +24,8 @@ public class UtenteBean implements Serializable {
         this.cognome = cognome;
         this.email = email;
         this.password = password;
-        this.ruolo = (ruolo != null && ruolo.trim().isEmpty()) ? ruolo : "Cliente";
+        this.ruolo = (ruolo != null && !ruolo.trim().isEmpty()) ? ruolo : "Cliente";
+
     }
 
     public int getId() { return id; }
