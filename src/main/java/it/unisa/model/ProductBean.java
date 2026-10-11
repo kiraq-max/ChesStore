@@ -57,7 +57,7 @@ public class ProductBean implements Serializable{
         return Objects.hash(id);
     }
 
-    Override
+    @Override
     public String toString() {
         return "ProductBean{" +
                 "id=" + id +
