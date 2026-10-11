@@ -3,9 +3,7 @@ package it.unisa.model;
 import java.io.Serializable;
 import java.util.Objects;
 
-/**
- * Rappresenta una categoria di prodotti (es. Scacchiere, Pezzi, Orologi, Libri) in ChesStore.
- */
+
 public class CategoriaBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
