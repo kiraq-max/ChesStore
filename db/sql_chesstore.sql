@@ -73,8 +73,8 @@ INSERT INTO categoria (nome, descrizione) VALUES
 
 -- Popolamento Utenti (Admin e Cliente di test)
 INSERT INTO utente (nome, cognome, email, password, ruolo) VALUES
-('Mario', 'Rossi', 'admin@chesstore.it', 'admin123', 'ADMIN'),
-('Luigi', 'Verdi', 'luigi.verdi@gmail.com', 'cliente123', 'CLIENTE');
+('Mario', 'Rossi', 'admin@chesstore.it', SHA2('admin123', 256), 'ADMIN'),
+('Luigi', 'Verdi', 'luigi.verdi@gmail.com', SHA2('cliente123', 256), 'CLIENTE');
 
 -- Popolamento Prodotti
 INSERT INTO prodotto (nome, descrizione, prezzo, quantita_disponibile, immagine, id_categoria) VALUES

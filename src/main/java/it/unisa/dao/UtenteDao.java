@@ -8,41 +8,22 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-/**
- * DAO per la gestione della tabella {@code utente}.
- * Fornisce le operazioni di autenticazione, ricerca e registrazione utente.
- */
+
 public class UtenteDao {
 
-    // -------------------------------------------------------------------------
-    // Query SQL
-    // -------------------------------------------------------------------------
-
     private static final String SQL_FIND_BY_EMAIL_PASSWORD =
-            "SELECT id, nome, cognome, email, password, ruolo " +
-            "FROM utente WHERE email = ? AND password = ?";
+        "SELECT id, nome, cognome, email, password, ruolo " +
+        "FROM utente WHERE email = ? AND password = SHA2(?, 256)";
 
     private static final String SQL_FIND_BY_EMAIL =
             "SELECT id, nome, cognome, email, password, ruolo " +
             "FROM utente WHERE email = ?";
 
     private static final String SQL_INSERT =
-            "INSERT INTO utente (nome, cognome, email, password, ruolo) " +
-            "VALUES (?, ?, ?, ?, ?)";
+        "INSERT INTO utente (nome, cognome, email, password, ruolo) " +
+        "VALUES (?, ?, ?, SHA2(?, 256), ?)";
 
-    // -------------------------------------------------------------------------
-    // Metodi pubblici
-    // -------------------------------------------------------------------------
-
-    /**
-     * Verifica le credenziali dell'utente per il login.
-     *
-     * @param email    email inserita nel form di login
-     * @param password password inserita nel form di login
-     * @return il {@link UtenteBean} corrispondente, oppure {@code null} se le
-     *         credenziali non corrispondono ad alcun utente
-     * @throws SQLException in caso di errore JDBC
-     */
+    
     public UtenteBean doRetrieveByEmailPassword(String email, String password)
             throws SQLException {
         try (Connection con = DBConnectionPool.getConnection();
@@ -60,14 +41,7 @@ public class UtenteDao {
         return null;
     }
 
-    /**
-     * Recupera un utente tramite la sola email.
-     * Utilizzato per controllare i duplicati durante la registrazione.
-     *
-     * @param email email da cercare
-     * @return il {@link UtenteBean} corrispondente, oppure {@code null} se non trovato
-     * @throws SQLException in caso di errore JDBC
-     */
+   
     public UtenteBean doRetrieveByEmail(String email) throws SQLException {
         try (Connection con = DBConnectionPool.getConnection();
              PreparedStatement ps = con.prepareStatement(SQL_FIND_BY_EMAIL)) {
@@ -83,15 +57,7 @@ public class UtenteDao {
         return null;
     }
 
-    /**
-     * Inserisce un nuovo utente nella tabella {@code utente}.
-     * Al termine dell'operazione, aggiorna l'id del bean con la chiave
-     * generata automaticamente dal DB (AUTO_INCREMENT).
-     *
-     * @param utente il bean da persistere (il campo {@code ruolo} deve essere
-     *               già valorizzato, di default {@code "CLIENTE"})
-     * @throws SQLException in caso di errore JDBC o se la email è già presente
-     */
+    
     public void doSave(UtenteBean utente) throws SQLException {
         try (Connection con = DBConnectionPool.getConnection();
              PreparedStatement ps = con.prepareStatement(
@@ -114,14 +80,7 @@ public class UtenteDao {
         }
     }
 
-    // -------------------------------------------------------------------------
-    // Helper privati
-    // -------------------------------------------------------------------------
-
-    /**
-     * Mappa una riga del {@link ResultSet} corrente in un {@link UtenteBean}.
-     * Il cursore del ResultSet deve essere già posizionato sulla riga da leggere.
-     */
+    
     private UtenteBean mapRow(ResultSet rs) throws SQLException {
         UtenteBean u = new UtenteBean();
         u.setId(rs.getInt("id"));
