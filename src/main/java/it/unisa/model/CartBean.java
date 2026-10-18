@@ -122,6 +122,14 @@ public class CartBean implements Serializable {
     }
 
     /**
+     * Restituisce il CartItem per l'ID di prodotto indicato, o null se non è nel carrello.
+     * Usato da CartServlet per controllare la quantità già presente prima di aggiungerne altra.
+     */
+    public CartItem getItemById(int productId) {
+        return items.get(productId);
+    }
+
+    /**
      * Calcola il prezzo totale dell'intero carrello.
      */
     public double getTotale() {
