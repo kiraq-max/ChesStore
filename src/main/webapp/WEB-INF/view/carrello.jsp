@@ -90,11 +90,11 @@
                 <h2>Riepilogo Ordine</h2>
                 <div class="summary-line">
                     <span>Articoli totali</span>
-                    <span><%= cart.getNumeroElementi() %></span>
+                    <span id="summary-count"><%= cart.getNumeroElementi() %></span>
                 </div>
                 <div class="summary-line summary-total">
                     <span>Totale</span>
-                    <span>&euro; <%= String.format("%.2f", cart.getTotale()) %></span>
+                    <span id="summary-total">&euro; <%= String.format("%.2f", cart.getTotale()) %></span>
                 </div>
                 <a href="${pageContext.request.contextPath}/checkout" class="btn btn-primary btn-checkout">Procedi all'Acquisto</a>
             </aside>
