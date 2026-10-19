@@ -44,3 +44,26 @@ a {
     width: 100%;
     margin: 0 auto;
 }
+
+#toast-container {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 9999;
+}
+
+.toast {
+    display: none;
+    padding: 0.5rem 1rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    color: #fff;
+}
+
+.toast-visible { display: block; }
+.toast-success { background-color: var(--success); }
+.toast-error   { background-color: var(--danger);  }
+
+.cart-feedback-msg      { margin-top: 0.4rem; font-size: 0.875rem; }
+.cart-feedback-success  { color: var(--success); }
+.cart-feedback-error    { color: var(--danger);  }
