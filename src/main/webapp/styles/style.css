@@ -5,7 +5,7 @@
     --text-secondary: #6c757d;
     --accent: #b8860b;
 
-    -accent-hover: #996f08;
+    --accent-hover: #996f08;
     --dark-theme: #1b1e23;
     --success: #28a745;
     --danger: #dc3545;
@@ -60,10 +60,27 @@ a {
     color: #fff;
 }
 
-.toast-visible { display: block; }
-.toast-success { background-color: var(--success); }
-.toast-error   { background-color: var(--danger);  }
+.toast-visible {
+    display: block;
+}
 
-.cart-feedback-msg      { margin-top: 0.4rem; font-size: 0.875rem; }
-.cart-feedback-success  { color: var(--success); }
-.cart-feedback-error    { color: var(--danger);  }
+.toast-success {
+    background-color: var(--success);
+}
+
+.toast-error {
+    background-color: var(--danger);
+}
+
+.cart-feedback-msg {
+    margin-top: 0.4rem;
+    font-size: 0.875rem;
+}
+
+.cart-feedback-success {
+    color: var(--success);
+}
+
+.cart-feedback-error {
+    color: var(--danger);
+}

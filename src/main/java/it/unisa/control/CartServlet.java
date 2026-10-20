@@ -136,6 +136,17 @@ public class CartServlet extends HttpServlet {
         if (itemEsistente != null) {
             giàNelCarrello = itemEsistente.getQuantita();
         }
+
+        if (giàNelCarrello >= prodotto.getQuantitaDisponibile()) {
+            if (isAjax) {
+                sendJsonError(response, HttpServletResponse.SC_BAD_REQUEST,
+                        "Quantità massima disponibile già presente nel carrello (" + prodotto.getQuantitaDisponibile() + " pz).");
+            } else {
+                response.sendRedirect(request.getContextPath() + "/carrello");
+            }
+            return;
+        }
+
         int totaleDopo = giàNelCarrello + quantita;
         if (totaleDopo > prodotto.getQuantitaDisponibile()) {
             quantita = prodotto.getQuantitaDisponibile() - giàNelCarrello;
@@ -146,7 +157,10 @@ public class CartServlet extends HttpServlet {
         }
 
         if (isAjax) {
-            sendJsonSuccess(response, cart);
+            CartBean.CartItem updatedItem = cart.getItemById(idProdotto);
+            int quantitaEffettiva = (updatedItem != null) ? updatedItem.getQuantita() : 0;
+            double subtotaleEffettivo = (updatedItem != null) ? updatedItem.getSubtotale() : 0.0;
+            sendJsonSuccess(response, cart, idProdotto, quantitaEffettiva, subtotaleEffettivo);
         } else {
             response.sendRedirect(request.getContextPath() + "/carrello");
         }
@@ -162,7 +176,7 @@ public class CartServlet extends HttpServlet {
         }
 
         if (isAjax) {
-            sendJsonSuccess(response, cart);
+            sendJsonSuccess(response, cart, idProdotto, 0, 0.0);
         } else {
             response.sendRedirect(request.getContextPath() + "/carrello");
         }
@@ -186,7 +200,10 @@ public class CartServlet extends HttpServlet {
         }
 
         if (isAjax) {
-            sendJsonSuccess(response, cart);
+            CartBean.CartItem updatedItem = cart.getItemById(idProdotto);
+            int quantitaEffettiva = (updatedItem != null) ? updatedItem.getQuantita() : 0;
+            double subtotaleEffettivo = (updatedItem != null) ? updatedItem.getSubtotale() : 0.0;
+            sendJsonSuccess(response, cart, idProdotto, quantitaEffettiva, subtotaleEffettivo);
         } else {
             response.sendRedirect(request.getContextPath() + "/carrello");
         }
@@ -199,7 +216,7 @@ public class CartServlet extends HttpServlet {
         cart.clear();
 
         if (isAjax) {
-            sendJsonSuccess(response, cart);
+            sendJsonSuccess(response, cart, 0, 0, 0.0);
         } else {
             response.sendRedirect(request.getContextPath() + "/carrello");
         }
@@ -232,12 +249,22 @@ public class CartServlet extends HttpServlet {
 
     private void sendJsonSuccess(HttpServletResponse response, CartBean cart)
             throws IOException {
+        sendJsonSuccess(response, cart, 0, 0, 0.0);
+    }
+
+    private void sendJsonSuccess(HttpServletResponse response, CartBean cart,
+                                 int idProdotto, int quantitaProdotto, double subtotaleProdotto)
+            throws IOException {
         response.setContentType("application/json;charset=UTF-8");
         response.setStatus(HttpServletResponse.SC_OK);
         String json = String.format(
-                "{\"success\":true,\"numeroElementi\":%d,\"totale\":%.2f}",
+                java.util.Locale.US,
+                "{\"success\":true,\"numeroElementi\":%d,\"totale\":%.2f,\"idProdotto\":%d,\"quantita\":%d,\"subtotale\":%.2f}",
                 cart.getNumeroElementi(),
-                cart.getTotale()
+                cart.getTotale(),
+                idProdotto,
+                quantitaProdotto,
+                subtotaleProdotto
         );
         try (PrintWriter out = response.getWriter()) {
             out.print(json);
