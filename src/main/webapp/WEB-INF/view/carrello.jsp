@@ -43,7 +43,7 @@
                                         <div class="cart-thumb-wrapper">
                                             <img src="${pageContext.request.contextPath}/images/<%= p.getImmagine() %>" 
                                                  alt="<%= p.getNome() %>"
-                                                 onerror="this.src='${pageContext.request.contextPath}/images/placeholder.png'">
+                                                 onerror="this.src='${pageContext.request.contextPath}/images/placeholder.svg'">
                                         </div>
                                         <div class="cart-product-details">
                                             <span class="cart-product-name"><%= p.getNome() %></span>
