@@ -1,5 +1,6 @@
 package it.unisa.dao;
 
+import it.unisa.model.ComposizioneOrdineBean;
 import it.unisa.model.OrdineBean;
 
 import java.sql.Connection;
@@ -24,9 +25,22 @@ public class OrdineDao {
             "SELECT id, data, totale, indirizzo_spedizione, metodo_pagamento, utente_email " +
             "FROM ordine WHERE utente_email = ? ORDER BY data DESC";
 
-    private static final String SQL_INSERT =
+    private static final String SQL_INSERT_ORDINE =
             "INSERT INTO ordine (data, totale, indirizzo_spedizione, metodo_pagamento, utente_email) " +
             "VALUES (?, ?, ?, ?, ?)";
+
+    private static final String SQL_INSERT_COMPOSIZIONE =
+            "INSERT INTO composizione_ordine " +
+            "(id_ordine, id_prodotto, nome_prodotto_storico, quantita, prezzo_unitario_storico) " +
+            "VALUES (?, ?, ?, ?, ?)";
+
+    private static final String SQL_DECREMENTA_SCORTA =
+            "UPDATE prodotto SET quantita_disponibile = quantita_disponibile - ? " +
+            "WHERE id = ? AND quantita_disponibile >= ?";
+
+    private static final String SQL_FIND_COMPOSIZIONE_BY_ORDINE =
+            "SELECT id, id_ordine, id_prodotto, nome_prodotto_storico, quantita, prezzo_unitario_storico " +
+            "FROM composizione_ordine WHERE id_ordine = ?";
 
     private static final String SQL_DELETE =
             "DELETE FROM ordine WHERE id = ?";
@@ -78,9 +92,10 @@ public class OrdineDao {
     public void doSave(OrdineBean ordine) throws SQLException {
         try (Connection con = DBConnectionPool.getConnection();
              PreparedStatement ps = con.prepareStatement(
-                     SQL_INSERT, Statement.RETURN_GENERATED_KEYS)) {
+                     SQL_INSERT_ORDINE, Statement.RETURN_GENERATED_KEYS)) {
 
-            ps.setTimestamp(1, new java.sql.Timestamp(ordine.getData().getTime()));
+            long time = (ordine.getData() != null) ? ordine.getData().getTime() : System.currentTimeMillis();
+            ps.setTimestamp(1, new java.sql.Timestamp(time));
             ps.setDouble(2, ordine.getTotale());
             ps.setString(3, ordine.getIndirizzoSpedizione());
             ps.setString(4, ordine.getMetodoPagamento());
@@ -94,6 +109,113 @@ public class OrdineDao {
                 }
             }
         }
+    }
+
+    public void doSave(OrdineBean ordine, List<ComposizioneOrdineBean> righeComposizione) throws SQLException {
+        if (ordine == null || righeComposizione == null || righeComposizione.isEmpty()) {
+            throw new IllegalArgumentException("Impossibile salvare un ordine vuoto.");
+        }
+
+        Connection con = null;
+        PreparedStatement psOrdine = null;
+        PreparedStatement psComposizione = null;
+        PreparedStatement psScorte = null;
+        ResultSet rsChiavi = null;
+
+        try {
+            con = DBConnectionPool.getConnection();
+            con.setAutoCommit(false);
+
+            psOrdine = con.prepareStatement(SQL_INSERT_ORDINE, Statement.RETURN_GENERATED_KEYS);
+            long time = (ordine.getData() != null) ? ordine.getData().getTime() : System.currentTimeMillis();
+            psOrdine.setTimestamp(1, new java.sql.Timestamp(time));
+            psOrdine.setDouble(2, ordine.getTotale());
+            psOrdine.setString(3, ordine.getIndirizzoSpedizione());
+            psOrdine.setString(4, ordine.getMetodoPagamento());
+            psOrdine.setString(5, ordine.getUtenteEmail());
+
+            psOrdine.executeUpdate();
+
+            rsChiavi = psOrdine.getGeneratedKeys();
+            if (!rsChiavi.next()) {
+                throw new SQLException("Creazione ordine fallita: nessun ID restituito dal database.");
+            }
+            int idOrdineGenerato = rsChiavi.getInt(1);
+            ordine.setId(idOrdineGenerato);
+
+            psComposizione = con.prepareStatement(SQL_INSERT_COMPOSIZIONE);
+            psScorte = con.prepareStatement(SQL_DECREMENTA_SCORTA);
+
+            for (ComposizioneOrdineBean riga : righeComposizione) {
+                if (riga.getIdProdotto() != null) {
+                    psScorte.setInt(1, riga.getQuantita());
+                    psScorte.setInt(2, riga.getIdProdotto());
+                    psScorte.setInt(3, riga.getQuantita());
+                    int righeAggiornate = psScorte.executeUpdate();
+
+                    if (righeAggiornate == 0) {
+                        throw new SQLException("Disponibilita insufficiente a magazzino per il prodotto ID: " + riga.getIdProdotto());
+                    }
+                }
+
+                psComposizione.setInt(1, idOrdineGenerato);
+                if (riga.getIdProdotto() != null) {
+                    psComposizione.setInt(2, riga.getIdProdotto());
+                } else {
+                    psComposizione.setNull(2, java.sql.Types.INTEGER);
+                }
+                psComposizione.setString(3, riga.getNomeProdottoStorico());
+                psComposizione.setInt(4, riga.getQuantita());
+                psComposizione.setDouble(5, riga.getPrezzoUnitarioStorico());
+
+                psComposizione.executeUpdate();
+            }
+
+            con.commit();
+        } catch (SQLException e) {
+            if (con != null) {
+                try {
+                    con.rollback();
+                } catch (SQLException ex) {
+                }
+            }
+            throw e;
+        } finally {
+            if (rsChiavi != null) try { rsChiavi.close(); } catch (SQLException ignored) {}
+            if (psOrdine != null) try { psOrdine.close(); } catch (SQLException ignored) {}
+            if (psComposizione != null) try { psComposizione.close(); } catch (SQLException ignored) {}
+            if (psScorte != null) try { psScorte.close(); } catch (SQLException ignored) {}
+            if (con != null) {
+                try {
+                    con.setAutoCommit(true);
+                    con.close();
+                } catch (SQLException ignored) {}
+            }
+        }
+    }
+
+    public List<ComposizioneOrdineBean> doRetrieveDettaglioOrdine(int idOrdine) throws SQLException {
+        List<ComposizioneOrdineBean> lista = new ArrayList<>();
+        try (Connection con = DBConnectionPool.getConnection();
+             PreparedStatement ps = con.prepareStatement(SQL_FIND_COMPOSIZIONE_BY_ORDINE)) {
+
+            ps.setInt(1, idOrdine);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    ComposizioneOrdineBean c = new ComposizioneOrdineBean();
+                    c.setId(rs.getInt("id"));
+                    c.setIdOrdine(rs.getInt("id_ordine"));
+                    int idProd = rs.getInt("id_prodotto");
+                    c.setIdProdotto(rs.wasNull() ? null : idProd);
+                    c.setNomeProdottoStorico(rs.getString("nome_prodotto_storico"));
+                    c.setQuantita(rs.getInt("quantita"));
+                    c.setPrezzoUnitarioStorico(rs.getDouble("prezzo_unitario_storico"));
+                    lista.add(c);
+                }
+            }
+        }
+        return lista;
     }
 
     public void doDelete(int id) throws SQLException {
