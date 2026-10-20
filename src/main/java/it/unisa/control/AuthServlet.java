@@ -136,7 +136,7 @@ public class AuthServlet extends HttpServlet {
             return;
         }
 
-        if (confermaPassword != null && !password.equals(confermaPassword)) {
+        if (confermaPassword == null || !password.equals(confermaPassword)) {
             request.setAttribute("regError", "Le password inserite non coincidono.");
             preserveRegForm(request, nome, cognome, email);
             request.getRequestDispatcher("/WEB-INF/view/login.jsp").forward(request, response);

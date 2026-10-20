@@ -38,6 +38,13 @@ public class DBConnectionPool {
     }
 
     /**
+     * Consente di impostare manualmente il DataSource (utile per i test automatizzati).
+     */
+    public static synchronized void setDataSource(DataSource dataSource) {
+        ds = dataSource;
+    }
+
+    /**
      * Estrae una connessione attiva dal pool del DataSource.
      */
     public static Connection getConnection() throws SQLException {
