@@ -69,7 +69,7 @@ public class CatalogoServlet extends HttpServlet{
                     response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Id prodotto non valido" );
                     return;
                 }
-            }
+            }			
 
             List<ProductBean> prodotti;
             Integer idCategoriaSelezionata = null;
