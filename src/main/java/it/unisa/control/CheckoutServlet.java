@@ -91,7 +91,6 @@ public class CheckoutServlet extends HttpServlet {
         String cap             = request.getParameter("cap");
         String metodoPagamento = request.getParameter("metodoPagamento");
 
-
         if (isBlank(via) || isBlank(citta) || isBlank(cap) || isBlank(metodoPagamento)) {
             request.setAttribute("cart", carrello);
             request.setAttribute("errorMessage", "Tutti i campi dell'indirizzo e il metodo di pagamento sono obbligatori.");
@@ -122,9 +121,7 @@ public class CheckoutServlet extends HttpServlet {
         try {
             ordineDao.doSave(ordine, righe); 
 
-            
             carrello.clear();
-
 
             request.setAttribute("ordine", ordine);
             request.setAttribute("righeOrdine", righe);
