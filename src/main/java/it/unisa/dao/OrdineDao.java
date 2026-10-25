@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class OrdineDao {
@@ -24,6 +25,10 @@ public class OrdineDao {
     private static final String SQL_FIND_BY_UTENTE =
             "SELECT id, data, totale, indirizzo_spedizione, metodo_pagamento, utente_email " +
             "FROM ordine WHERE utente_email = ? ORDER BY data DESC";
+
+    private static final String SQL_FIND_BY_DATA_RANGE =
+            "SELECT id, data, totale, indirizzo_spedizione, metodo_pagamento, utente_email " +
+            "FROM ordine WHERE data >= ? AND data <= ? ORDER BY data DESC";
 
     private static final String SQL_INSERT_ORDINE =
             "INSERT INTO ordine (data, totale, indirizzo_spedizione, metodo_pagamento, utente_email) " +
@@ -79,6 +84,79 @@ public class OrdineDao {
              PreparedStatement ps = con.prepareStatement(SQL_FIND_BY_UTENTE)) {
 
             ps.setString(1, utenteEmail);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(mapRow(rs));
+                }
+            }
+        }
+        return lista;
+    }
+
+    public List<OrdineBean> doRetrieveAllOrdini() throws SQLException {
+        return doRetrieveAll();
+    }
+
+    public List<OrdineBean> doRetrieveByCliente(String email) throws SQLException {
+        return doRetrieveByUtente(email);
+    }
+
+    public List<OrdineBean> doRetrieveByDataRange(Date daData, Date aData) throws SQLException {
+        List<OrdineBean> lista = new ArrayList<>();
+        try (Connection con = DBConnectionPool.getConnection();
+             PreparedStatement ps = con.prepareStatement(SQL_FIND_BY_DATA_RANGE)) {
+
+            java.sql.Timestamp tsDa = (daData != null) ? new java.sql.Timestamp(daData.getTime()) : new java.sql.Timestamp(0);
+            java.sql.Timestamp tsA = (aData != null) ? new java.sql.Timestamp(aData.getTime()) : new java.sql.Timestamp(System.currentTimeMillis());
+
+            ps.setTimestamp(1, tsDa);
+            ps.setTimestamp(2, tsA);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(mapRow(rs));
+                }
+            }
+        }
+        return lista;
+    }
+
+    public List<OrdineBean> doRetrieveFiltered(String clienteEmail, Date daData, Date aData) throws SQLException {
+        StringBuilder sql = new StringBuilder(
+                "SELECT id, data, totale, indirizzo_spedizione, metodo_pagamento, utente_email FROM ordine WHERE 1=1"
+        );
+        List<Object> params = new ArrayList<>();
+
+        if (clienteEmail != null && !clienteEmail.trim().isEmpty()) {
+            sql.append(" AND utente_email LIKE ?");
+            params.add("%" + clienteEmail.trim() + "%");
+        }
+
+        if (daData != null) {
+            sql.append(" AND data >= ?");
+            params.add(new java.sql.Timestamp(daData.getTime()));
+        }
+
+        if (aData != null) {
+            sql.append(" AND data <= ?");
+            params.add(new java.sql.Timestamp(aData.getTime()));
+        }
+
+        sql.append(" ORDER BY data DESC");
+
+        List<OrdineBean> lista = new ArrayList<>();
+        try (Connection con = DBConnectionPool.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql.toString())) {
+
+            for (int i = 0; i < params.size(); i++) {
+                Object p = params.get(i);
+                if (p instanceof String) {
+                    ps.setString(i + 1, (String) p);
+                } else if (p instanceof java.sql.Timestamp) {
+                    ps.setTimestamp(i + 1, (java.sql.Timestamp) p);
+                }
+            }
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
