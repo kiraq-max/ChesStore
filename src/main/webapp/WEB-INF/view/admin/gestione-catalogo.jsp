@@ -128,7 +128,7 @@
                            name="immagine"
                            class="form-control"
                            placeholder="es. images/scacchi-legno.jpg"
-                           value="<%= (isEdit && prodottoModifica.getImmagine() != null) ? prodottoModifica.getImmagine() : "images/chess-default.png" %>">
+                           value="<%= (isEdit && prodottoModifica.getImmagine() != null) ? prodottoModifica.getImmagine() : "images/chess-default.svg" %>">
                     <small class="form-help">Inserisci il percorso relativo in images/ (es. images/scacchiera.jpg).</small>
                 </div>
 
@@ -176,10 +176,16 @@
                                 <tr class="<%= (isEdit && p.getId() == prodottoModifica.getId()) ? "row-highlight" : "" %>">
                                     <td><strong>#<%= p.getId() %></strong></td>
                                     <td>
-                                        <img src="${pageContext.request.contextPath}/<%= p.getImmagine() %>"
+                                        <%
+                                            String thumbPath = p.getImmagine();
+                                            if (thumbPath != null && !thumbPath.startsWith("images/") && !thumbPath.startsWith("http")) {
+                                                thumbPath = "images/" + thumbPath;
+                                            }
+                                        %>
+                                        <img src="${pageContext.request.contextPath}/<%= thumbPath %>"
                                              alt="<%= p.getNome() %>"
                                              class="admin-thumb"
-                                             onerror="this.src='${pageContext.request.contextPath}/images/chess-default.png'">
+                                             onerror="this.src='${pageContext.request.contextPath}/images/chess-default.svg'">
                                     </td>
                                     <td>
                                         <div class="product-title-cell">

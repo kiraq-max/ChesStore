@@ -472,9 +472,182 @@ function initAuthFormValidation() {
     }
 }
 
+/**
+ * Validazione form Checkout (indirizzo, città, CAP, metodo di pagamento).
+ * Regex su evento change + blocco submit se non valido. Zero alert().
+ */
+function initCheckoutValidation() {
+    const formCheckout = document.getElementById('checkout-form');
+    if (!formCheckout) return;
+
+    const capRegex     = /^\d{5}$/;
+    const textRegex    = /^.{2,}$/;
+
+    function setErr(field, spanId, msg) {
+        const span = document.getElementById(spanId);
+        if (!field) return;
+        if (msg) {
+            field.classList.add('input-invalid');
+            field.classList.remove('input-valid');
+            if (span) { span.textContent = msg; span.style.display = 'block'; }
+        } else {
+            field.classList.remove('input-invalid');
+            field.classList.add('input-valid');
+            if (span) { span.textContent = ''; span.style.display = 'none'; }
+        }
+    }
+
+    const via    = document.getElementById('via');
+    const citta  = document.getElementById('citta');
+    const cap    = document.getElementById('cap');
+
+    function validateVia() {
+        const v = via ? via.value.trim() : '';
+        if (!v) { setErr(via, 'via-error', "L'indirizzo è obbligatorio."); return false; }
+        if (!textRegex.test(v)) { setErr(via, 'via-error', 'Inserisci un indirizzo valido (min. 2 caratteri).'); return false; }
+        setErr(via, 'via-error', ''); return true;
+    }
+
+    function validateCitta() {
+        const v = citta ? citta.value.trim() : '';
+        if (!v) { setErr(citta, 'citta-error', 'La città è obbligatoria.'); return false; }
+        if (!textRegex.test(v)) { setErr(citta, 'citta-error', 'Inserisci una città valida (min. 2 caratteri).'); return false; }
+        setErr(citta, 'citta-error', ''); return true;
+    }
+
+    function validateCap() {
+        const v = cap ? cap.value.trim() : '';
+        if (!v) { setErr(cap, 'cap-error', 'Il CAP è obbligatorio.'); return false; }
+        if (!capRegex.test(v)) { setErr(cap, 'cap-error', 'Il CAP deve essere composto da 5 cifre (es. 80100).'); return false; }
+        setErr(cap, 'cap-error', ''); return true;
+    }
+
+    function validateMetodoPagamento() {
+        const checked = formCheckout.querySelector('input[name="metodoPagamento"]:checked');
+        const span    = document.getElementById('metodoPagamento-error');
+        if (!checked) {
+            if (span) { span.textContent = 'Seleziona un metodo di pagamento.'; span.style.display = 'block'; }
+            return false;
+        }
+        if (span) { span.textContent = ''; span.style.display = 'none'; }
+        return true;
+    }
+
+    // Listener change per validazione campo per campo
+    if (via)   { via.addEventListener('change',   validateVia);   via.addEventListener('input',   function() { if (via.classList.contains('input-invalid'))   validateVia();   }); }
+    if (citta) { citta.addEventListener('change', validateCitta); citta.addEventListener('input', function() { if (citta.classList.contains('input-invalid')) validateCitta(); }); }
+    if (cap)   { cap.addEventListener('change',   validateCap);   cap.addEventListener('input',   function() { if (cap.classList.contains('input-invalid'))   validateCap();   }); }
+
+    formCheckout.querySelectorAll('input[name="metodoPagamento"]').forEach(function(radio) {
+        radio.addEventListener('change', validateMetodoPagamento);
+    });
+
+    // Blocco submit se non valido
+    formCheckout.addEventListener('submit', function(event) {
+        const v1 = validateVia();
+        const v2 = validateCitta();
+        const v3 = validateCap();
+        const v4 = validateMetodoPagamento();
+        if (!v1 || !v2 || !v3 || !v4) {
+            event.preventDefault();
+            if (!v1 && via)   via.focus();
+            else if (!v2 && citta) citta.focus();
+            else if (!v3 && cap)   cap.focus();
+        }
+    });
+}
+
+/**
+ * Validazione form inserimento/modifica prodotto Admin.
+ * ID campi: admin-nome, admin-idCategoria, admin-prezzo, admin-quantita.
+ * Regex su evento change + blocco submit. Zero alert().
+ */
+function initAdminProductFormValidation() {
+    const formAdmin = document.getElementById('form-admin-prodotto');
+    if (!formAdmin) return;
+
+    const prezzoRegex   = /^\d+(\.\d{1,2})?$/;
+    const quantitaRegex = /^\d+$/;
+
+    function setErr(field, spanId, msg) {
+        const span = document.getElementById(spanId);
+        if (!field) return;
+        if (msg) {
+            field.classList.add('input-invalid');
+            field.classList.remove('input-valid');
+            if (span) { span.textContent = msg; span.style.display = 'block'; }
+        } else {
+            field.classList.remove('input-invalid');
+            field.classList.add('input-valid');
+            if (span) { span.textContent = ''; span.style.display = 'none'; }
+        }
+    }
+
+    const nome     = document.getElementById('admin-nome');
+    const cat      = document.getElementById('admin-idCategoria');
+    const prezzo   = document.getElementById('admin-prezzo');
+    const quantita = document.getElementById('admin-quantita');
+
+    function validateNomeProdotto() {
+        const v = nome ? nome.value.trim() : '';
+        if (!v) { setErr(nome, 'admin-nome-msg', 'Il nome del prodotto è obbligatorio.'); return false; }
+        if (v.length < 2) { setErr(nome, 'admin-nome-msg', 'Il nome deve contenere almeno 2 caratteri.'); return false; }
+        setErr(nome, 'admin-nome-msg', ''); return true;
+    }
+
+    function validateCategoria() {
+        const v = cat ? cat.value : '';
+        if (!v || v === '') { setErr(cat, 'admin-categoria-msg', 'Seleziona una categoria.'); return false; }
+        setErr(cat, 'admin-categoria-msg', ''); return true;
+    }
+
+    function validatePrezzo() {
+        const v = prezzo ? prezzo.value.trim() : '';
+        if (!v) { setErr(prezzo, 'admin-prezzo-msg', 'Il prezzo è obbligatorio.'); return false; }
+        if (!prezzoRegex.test(v) || parseFloat(v) <= 0) {
+            setErr(prezzo, 'admin-prezzo-msg', 'Il prezzo deve essere un numero positivo (es. 29.99).');
+            return false;
+        }
+        setErr(prezzo, 'admin-prezzo-msg', ''); return true;
+    }
+
+    function validateQuantita() {
+        const v = quantita ? quantita.value.trim() : '';
+        if (v === '') { setErr(quantita, 'admin-quantita-msg', 'La quantità è obbligatoria.'); return false; }
+        if (!quantitaRegex.test(v) || parseInt(v, 10) < 0) {
+            setErr(quantita, 'admin-quantita-msg', 'La quantità deve essere un numero intero non negativo.');
+            return false;
+        }
+        setErr(quantita, 'admin-quantita-msg', ''); return true;
+    }
+
+    // Listener change campo per campo
+    if (nome)     { nome.addEventListener('change',     validateNomeProdotto); nome.addEventListener('input',     function() { if (nome.classList.contains('input-invalid'))     validateNomeProdotto(); }); }
+    if (cat)      { cat.addEventListener('change',      validateCategoria); }
+    if (prezzo)   { prezzo.addEventListener('change',   validatePrezzo);   prezzo.addEventListener('input',   function() { if (prezzo.classList.contains('input-invalid'))   validatePrezzo();   }); }
+    if (quantita) { quantita.addEventListener('change', validateQuantita); quantita.addEventListener('input', function() { if (quantita.classList.contains('input-invalid')) validateQuantita(); }); }
+
+    // Blocco submit se non valido
+    formAdmin.addEventListener('submit', function(event) {
+        const v1 = validateNomeProdotto();
+        const v2 = validateCategoria();
+        const v3 = validatePrezzo();
+        const v4 = validateQuantita();
+        if (!v1 || !v2 || !v3 || !v4) {
+            event.preventDefault();
+            if (!v1 && nome)     nome.focus();
+            else if (!v2 && cat) cat.focus();
+            else if (!v3 && prezzo) prezzo.focus();
+            else if (quantita)   quantita.focus();
+        }
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     initAddToCartButtons();
     initDetailForm();
     initCartPageAjax();
     initAuthFormValidation();
+    initCheckoutValidation();
+    initAdminProductFormValidation();
 });
