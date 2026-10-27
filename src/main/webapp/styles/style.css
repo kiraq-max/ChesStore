@@ -238,14 +238,200 @@ a {
     color: #fff;
 }
 
-/* Responsive */
+/* ================================================
+   ADMIN – Pannello Amministratore
+   ================================================ */
+.admin-section {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+}
+
+.admin-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+    flex-wrap: wrap;
+}
+
+.admin-header h1 {
+    font-size: 1.75rem;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.admin-subtitle {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.admin-nav-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.admin-card {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.admin-card h2 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
+.admin-alert {
+    padding: 0.85rem 1.25rem;
+    border-radius: var(--radius);
+    margin-bottom: 1.25rem;
+    font-weight: 500;
+    font-size: 0.92rem;
+}
+
+.admin-alert-success {
+    background: #d4edda;
+    color: #155724;
+    border-left: 4px solid var(--success);
+}
+
+.admin-alert-error {
+    background: #f8d7da;
+    color: #721c24;
+    border-left: 4px solid var(--danger);
+}
+
+/* Grid layout per la pagina gestione catalogo */
+.admin-grid {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+.admin-form .form-group,
+.filter-form .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    margin-bottom: 1rem;
+}
+
+.admin-form label,
+.filter-form label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.form-control {
+    padding: 0.55rem 0.85rem;
+    border: 1px solid #d1d5db;
+    border-radius: var(--radius);
+    font-size: 0.92rem;
+    font-family: var(--font-main);
+    background: #fff;
+    color: var(--text-primary);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(184, 134, 11, 0.15);
+}
+
+/* Form filtri ordini admin */
+.filter-card {
+    margin-bottom: 1.25rem;
+}
+
+.filter-row {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+.filter-row .form-group {
+    flex: 1;
+    min-width: 160px;
+    margin-bottom: 0;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+    flex: none !important;
+}
+
+/* Contatore risultati sopra la tabella */
+.admin-table-header {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 0.6rem;
+}
+
+.admin-count {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* Tabella ordini admin – colonne extra */
+.admin-orders-table .email-cell {
+    font-size: 0.82rem;
+    word-break: break-all;
+    max-width: 180px;
+}
+
+.admin-orders-table .date-cell {
+    font-size: 0.83rem;
+    white-space: nowrap;
+}
+
+/* Totale evidenziato nel dettaglio admin */
+.order-total-big {
+    font-size: 1.25rem;
+    color: var(--accent);
+}
+
+/* ================================================
+   Responsive
+   ================================================ */
+@media (max-width: 900px) {
+    .admin-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 @media (max-width: 640px) {
     .order-detail-meta {
         grid-template-columns: 1fr;
     }
 
-    .orders-table th:nth-child(3),
-    .orders-table td:nth-child(3) {
+    .filter-row {
+        flex-direction: column;
+    }
+
+    .filter-row .form-group {
+        min-width: 100%;
+    }
+
+    .orders-table th:nth-child(4),
+    .orders-table td:nth-child(4),
+    .orders-table th:nth-child(5),
+    .orders-table td:nth-child(5) {
         display: none;
     }
 }
