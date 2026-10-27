@@ -33,7 +33,8 @@
                         <div class="user-menu">
                             <span class="user-greeting">Ciao, <strong><%= headerUser.getNome() %></strong></span>
                             <% if ("admin".equalsIgnoreCase(headerUser.getRuolo())) { %>
-                                <a href="${pageContext.request.contextPath}/admin/catalogo" class="nav-link admin-link">Area Admin</a>
+                                <a href="${pageContext.request.contextPath}/admin/catalogo" class="nav-link admin-link">Catalogo</a>
+                                <a href="${pageContext.request.contextPath}/admin/ordini" class="nav-link admin-link">Ordini</a>
                             <% } else { %>
                                 <a href="${pageContext.request.contextPath}/ordini" class="nav-link user-ordini">I miei Ordini</a>
                             <% } %>
