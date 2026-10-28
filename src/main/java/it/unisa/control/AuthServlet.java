@@ -47,8 +47,7 @@ public class AuthServlet extends HttpServlet {
             return;
         }
 
-        HttpSession session = request.getSession(false);
-        if (session != null && session.getAttribute("utente") != null) {
+        if (AuthControlUtils.isLoggedIn(request)) {
             response.sendRedirect(request.getContextPath() + "/index.jsp");
             return;
         }
@@ -107,8 +106,7 @@ public class AuthServlet extends HttpServlet {
 
         if (utente != null) {
             HttpSession session = request.getSession(true);
-            session.setAttribute("utente", utente);
-            session.setAttribute("ruolo", utente.getRuolo());
+            AuthControlUtils.registerUserSession(session, utente);
 
             response.sendRedirect(request.getContextPath() + "/index.jsp");
         } else {
@@ -163,8 +161,7 @@ public class AuthServlet extends HttpServlet {
         utenteDao.doSave(nuovoUtente);
 
         HttpSession session = request.getSession(true);
-        session.setAttribute("utente", nuovoUtente);
-        session.setAttribute("ruolo", nuovoUtente.getRuolo());
+        AuthControlUtils.registerUserSession(session, nuovoUtente);
 
         response.sendRedirect(request.getContextPath() + "/index.jsp");
     }
@@ -173,9 +170,7 @@ public class AuthServlet extends HttpServlet {
             throws IOException {
         HttpSession session = request.getSession(false);
         if (session != null) {
-            session.removeAttribute("utente");
-            session.removeAttribute("ruolo");
-            session.invalidate();
+            AuthControlUtils.invalidateUserSession(session);
         }
         response.sendRedirect(request.getContextPath() + "/index.jsp");
     }

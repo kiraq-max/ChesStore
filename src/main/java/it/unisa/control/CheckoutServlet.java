@@ -47,13 +47,10 @@ public class CheckoutServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        HttpSession session = request.getSession(false);
-        UtenteBean utente = (session != null) ? (UtenteBean) session.getAttribute(SESSION_UTENTE) : null;
-
-        if (utente == null) {
-            response.sendRedirect(request.getContextPath() + "/auth");
+        if (!AuthControlUtils.checkUserAuth(request, response)) {
             return;
         }
+        HttpSession session = request.getSession(false);
 
         CartBean carrello = (CartBean) session.getAttribute(SESSION_CART);
 
@@ -72,14 +69,12 @@ public class CheckoutServlet extends HttpServlet {
 
         request.setCharacterEncoding("UTF-8");
 
-        HttpSession session = request.getSession(false);
-        UtenteBean utente  = (session != null) ? (UtenteBean) session.getAttribute(SESSION_UTENTE) : null;
-        CartBean   carrello = (session != null) ? (CartBean) session.getAttribute(SESSION_CART) : null;
-
-        if (utente == null) {
-            response.sendRedirect(request.getContextPath() + "/auth");
+        if (!AuthControlUtils.checkUserAuth(request, response)) {
             return;
         }
+        HttpSession session = request.getSession(false);
+        UtenteBean utente   = AuthControlUtils.getLoggedUser(request);
+        CartBean carrello   = (session != null) ? (CartBean) session.getAttribute(SESSION_CART) : null;
         if (carrello == null || carrello.isEmpty()) {
             response.sendRedirect(request.getContextPath() + "/carrello");
             return;

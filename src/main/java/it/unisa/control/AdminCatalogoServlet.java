@@ -264,19 +264,6 @@ public class AdminCatalogoServlet extends HttpServlet {
     }
 
     private boolean checkAdminAuth(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        HttpSession session = request.getSession(false);
-        UtenteBean utente = (session != null) ? (UtenteBean) session.getAttribute(SESSION_UTENTE) : null;
-
-        if (utente == null) {
-            response.sendRedirect(request.getContextPath() + "/auth");
-            return false;
-        }
-
-        if (!RUOLO_ADMIN.equalsIgnoreCase(utente.getRuolo())) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Accesso negato: area riservata agli amministratori.");
-            return false;
-        }
-
-        return true;
+        return AuthControlUtils.checkAdminAuth(request, response);
     }
 }

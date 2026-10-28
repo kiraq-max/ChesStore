@@ -43,13 +43,10 @@ public class OrdineClienteServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        HttpSession session = request.getSession(false);
-        UtenteBean utente = (session != null) ? (UtenteBean) session.getAttribute(SESSION_UTENTE) : null;
-
-        if (utente == null) {
-            response.sendRedirect(request.getContextPath() + "/auth");
+        if (!AuthControlUtils.checkUserAuth(request, response)) {
             return;
         }
+        UtenteBean utente = AuthControlUtils.getLoggedUser(request);
 
         String idParam = request.getParameter("id");
 
