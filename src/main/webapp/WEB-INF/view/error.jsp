@@ -29,12 +29,13 @@
                             <div class="error-actions">
                                 <a href="${pageContext.request.contextPath}/index.jsp" class="btn btn-primary">Torna
                                     alla home</a>
-                                <button type="button" class="btn btn-secondary" onclick="window.history.back()">Torna
+                                <button type="button" class="btn btn-secondary" id="btn-error-back">Torna
                                     alla pagina precedente</button>
                             </div>
             </div>
 
         </main>
+        <script src="${pageContext.request.contextPath}/scripts/main.js"></script>
     </body>
 
     </html>

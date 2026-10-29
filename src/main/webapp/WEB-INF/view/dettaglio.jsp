@@ -36,8 +36,7 @@
         <div class="product-detail-image-wrapper">
             <img class="product-detail-image"
                  src="${pageContext.request.contextPath}/images/<%= p.getImmagine() %>"
-                 alt="<%= p.getNome() %>"
-                 onerror="this.src='${pageContext.request.contextPath}/images/placeholder.svg'">
+                 alt="<%= p.getNome() %>">
         </div>
 
         <div class="product-detail-info">

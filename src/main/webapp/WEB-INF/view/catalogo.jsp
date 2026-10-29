@@ -39,8 +39,7 @@
                                                         class="product-card-link">
                                                         <div class="product-image-wrapper">
                                                             <img src="${pageContext.request.contextPath}/images/<%= p.getImmagine() %>"
-                                                                alt="<%= p.getNome() %>"
-                                                                onerror="this.src='${pageContext.request.contextPath}/images/placeholder.svg'">
+                                                                alt="<%= p.getNome() %>">
                                                         </div>
                                                         <div class="product-info">
                                                             <h3 class="product-name">

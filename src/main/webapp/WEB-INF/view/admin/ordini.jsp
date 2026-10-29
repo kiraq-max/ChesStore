@@ -55,7 +55,7 @@
         <%-- ===== FORM FILTRI ===== --%>
         <div class="admin-card filter-card">
             <h2>&#128270; Filtra Ordini</h2>
-            <form action="${pageContext.request.contextPath}/admin/ordini" method="post" class="filter-form">
+            <form id="form-filtro-ordini" action="${pageContext.request.contextPath}/admin/ordini" method="post" class="filter-form" novalidate>
                 <div class="filter-row">
                     <div class="form-group">
                         <label for="filter-email">Email Cliente</label>
@@ -65,6 +65,7 @@
                                class="form-control"
                                placeholder="es. mario@email.it"
                                value="<%= filterEmail %>">
+                        <span class="field-error" id="filter-email-msg"></span>
                     </div>
                     <div class="form-group">
                         <label for="filter-da-data">Da Data</label>
@@ -73,6 +74,7 @@
                                name="daData"
                                class="form-control"
                                value="<%= filterDaData %>">
+                        <span class="field-error" id="filter-da-data-msg"></span>
                     </div>
                     <div class="form-group">
                         <label for="filter-a-data">A Data</label>
@@ -81,6 +83,7 @@
                                name="aData"
                                class="form-control"
                                value="<%= filterAData %>">
+                        <span class="field-error" id="filter-a-data-msg"></span>
                     </div>
                     <div class="form-group filter-actions">
                         <button type="submit" class="btn btn-primary" id="btn-apply-filters">&#128269; Filtra</button>
@@ -169,7 +172,7 @@
                 </div>
             </div>
 
-            <h2 style="margin-bottom:1rem;">Prodotti acquistati</h2>
+            <h2 class="order-items-heading">Prodotti acquistati</h2>
             <table class="orders-table confirm-table">
                 <thead>
                     <tr>

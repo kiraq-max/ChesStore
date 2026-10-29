@@ -54,7 +54,8 @@
             <form id="form-admin-prodotto"
                   action="${pageContext.request.contextPath}/admin/catalogo"
                   method="post"
-                  class="admin-form">
+                  class="admin-form"
+                  novalidate>
 
                 <input type="hidden" name="action" value="<%= isEdit ? "update" : "insert" %>">
                 <% if (isEdit) { %>
@@ -70,7 +71,7 @@
                            required
                            placeholder="es. Scacchiera in Noce e Acero 50cm"
                            value="<%= (isEdit && prodottoModifica.getNome() != null) ? prodottoModifica.getNome() : "" %>">
-                    <span class="field-error" id="admin-nome-msg" style="display:none;"></span>
+                    <span class="field-error" id="admin-nome-msg"></span>
                 </div>
 
                 <div class="form-row">
@@ -87,7 +88,7 @@
                             <%     }
                                } %>
                         </select>
-                        <span class="field-error" id="admin-categoria-msg" style="display:none;"></span>
+                        <span class="field-error" id="admin-categoria-msg"></span>
                     </div>
                 </div>
 
@@ -103,7 +104,7 @@
                                required
                                placeholder="0.00"
                                value="<%= isEdit ? String.format(java.util.Locale.US, "%.2f", prodottoModifica.getPrezzo()) : "" %>">
-                        <span class="field-error" id="admin-prezzo-msg" style="display:none;"></span>
+                        <span class="field-error" id="admin-prezzo-msg"></span>
                     </div>
 
                     <div class="form-group">
@@ -117,7 +118,7 @@
                                required
                                placeholder="10"
                                value="<%= isEdit ? prodottoModifica.getQuantitaDisponibile() : "10" %>">
-                        <span class="field-error" id="admin-quantita-msg" style="display:none;"></span>
+                        <span class="field-error" id="admin-quantita-msg"></span>
                     </div>
                 </div>
 
@@ -184,8 +185,7 @@
                                         %>
                                         <img src="${pageContext.request.contextPath}/<%= thumbPath %>"
                                              alt="<%= p.getNome() %>"
-                                             class="admin-thumb"
-                                             onerror="this.src='${pageContext.request.contextPath}/images/chess-default.svg'">
+                                             class="admin-thumb">
                                     </td>
                                     <td>
                                         <div class="product-title-cell">
@@ -207,8 +207,7 @@
                                         </a>
                                         <form action="${pageContext.request.contextPath}/admin/catalogo"
                                               method="post"
-                                              style="display:inline;"
-                                              onsubmit="return confirm('Sei sicuro di voler eliminare questo prodotto dal catalogo?');">
+                                              class="form-inline-delete form-admin-delete">
                                             <input type="hidden" name="action" value="delete">
                                             <input type="hidden" name="id"     value="<%= p.getId() %>">
                                             <button type="submit"

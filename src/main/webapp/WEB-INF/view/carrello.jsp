@@ -42,8 +42,7 @@
                                     <a href="${pageContext.request.contextPath}/catalogo?id=<%= p.getId() %>" class="cart-product-link">
                                         <div class="cart-thumb-wrapper">
                                             <img src="${pageContext.request.contextPath}/images/<%= p.getImmagine() %>" 
-                                                 alt="<%= p.getNome() %>"
-                                                 onerror="this.src='${pageContext.request.contextPath}/images/placeholder.svg'">
+                                                 alt="<%= p.getNome() %>">
                                         </div>
                                         <div class="cart-product-details">
                                             <span class="cart-product-name"><%= p.getNome() %></span>
@@ -78,7 +77,7 @@
                 </table>
 
                 <div class="cart-table-footer">
-                    <form action="${pageContext.request.contextPath}/carrello" method="POST" onsubmit="return confirm('Sei sicuro di voler svuotare il carrello?');">
+                    <form id="form-svuota-carrello" action="${pageContext.request.contextPath}/carrello" method="POST">
                         <input type="hidden" name="action" value="svuota">
                         <button type="submit" class="btn btn-secondary">Svuota Carrello</button>
                     </form>

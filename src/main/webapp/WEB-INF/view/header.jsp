@@ -10,7 +10,6 @@
 
         <link rel="stylesheet" href="${pageContext.request.contextPath}/styles/style.css">
         <meta name="context-path" content="${pageContext.request.contextPath}">
-        <script>window.contextPath = "${pageContext.request.contextPath}";</script>
     </head>
 
     <body>

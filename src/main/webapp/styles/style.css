@@ -562,3 +562,47 @@ legend   { font-size: 1rem; font-weight: 700; margin-bottom: 0.75rem; color: var
     .orders-table th:nth-child(4),
     .orders-table td:nth-child(4) { display: none; }
 }
+
+/* Classi dedicate per separazione codice CSS dalle JSP */
+.order-items-heading { margin-bottom: 1rem; }
+.form-inline-delete  { display: inline; }
+
+/* Modal di conferma nativo DOM (Zero alert/confirm) */
+.dom-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+.dom-modal-box {
+    background: #ffffff;
+    border-radius: var(--radius);
+    padding: 1.75rem;
+    max-width: 440px;
+    width: 90%;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+    text-align: center;
+}
+.dom-modal-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: var(--dark);
+}
+.dom-modal-message {
+    font-size: 0.95rem;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+    line-height: 1.4;
+}
+.dom-modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 0.75rem;
+}
